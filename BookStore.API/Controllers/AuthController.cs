@@ -4,7 +4,7 @@ using BookStore.Business.Dtos;
 using BookStore.Business.Services;
 using Microsoft.AspNetCore.Identity;
 using BookStore.Data.Entities;
-using BookStore.Business.Dtos.Requests;
+using BookStore.Business.Dtos.Auth.Requests;
 
 namespace BookStore.API.Controllers;
 

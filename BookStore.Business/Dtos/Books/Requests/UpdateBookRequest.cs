@@ -1,19 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System;
+using BookStore.Business.Dtos.Categories.Responses;
 
-namespace BookStore.Data.Entities;
+namespace BookStore.Business.Dtos.Books.Requests;
 
-[Table("Books")]
-public class Book
+public class UpdateBookRequest
 {
-    [Key]
-    public int Id { get; set; }
 
-    [Required]
     public string Title { get; set; } = null!;
-
-    [MaxLength(1000)]
-    [Required]
     public string Description { get; set; } = null!;
     public string? Author { get; set; }
     public int PageCount { get; set; }
@@ -24,7 +17,5 @@ public class Book
     public double Price { get; set; }
     public DateOnly? PublishedDate { get; set; }
 
-    [Required]
     public int CategoryId { get; set; }
-    public Category Category { get; set; } = null!;
 }
