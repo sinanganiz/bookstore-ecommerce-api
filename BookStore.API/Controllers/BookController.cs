@@ -2,6 +2,11 @@
 
 using BookStore.Business.Dtos;
 using BookStore.Business.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using BookStore.Business.Constants;
 
 namespace BookStore.API.Controllers;
 
@@ -24,4 +29,17 @@ public class BookController : ControllerBase
         return bookResponses;
     }
 
+    [Authorize(Roles = Roles.Admin)]
+    [HttpGet("admin")]
+    public IActionResult GetSecureAdminData()
+    {
+        return Ok("Tebrikler. Admin verisine ulaşabiliyorsunuz.");
+    }
+
+    [Authorize(Roles = Roles.Customer)]
+    [HttpGet("customer")]
+    public IActionResult GetSecureCustomerData()
+    {
+        return Ok("Tebrikler. Customer verisine ulaşabiliyorsunuz.");
+    }
 }
