@@ -1,6 +1,6 @@
 namespace BookStore.Business.Dtos.Users;
 
-public class CreateUserRequest
+public class CreateUserRequestWithPassword
 {
     public string Name { get; set; } = null!;
     public string Surname { get; set; } = null!;
