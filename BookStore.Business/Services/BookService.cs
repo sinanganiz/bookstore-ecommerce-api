@@ -1,6 +1,4 @@
-﻿
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using BookStore.Business.Dtos.Books.Requests;
 using BookStore.Business.Dtos.Books.Responses;
 using BookStore.Data.Contexts;
@@ -20,12 +18,33 @@ public class BookService
         _mapper = mapper;
     }
 
+    public async Task<BookResponse> GetByBookId(int bookId)
+    {
+        try
+        {
+            if (bookId < 0) throw new ArgumentException("Geçersiz bookId");
+
+            var book = await _context.Books.Include(b => b.Category).FirstOrDefaultAsync(b => b.Id == bookId);
+
+            if (book == null) throw new Exception("Kitap bulunamadı.");
+
+            BookResponse bookResponse = _mapper.Map<BookResponse>(book);
+
+            return bookResponse;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex + "GetByBookId işleminde hata oluştu");
+            throw;
+        }
+    }
+
     public async Task<List<BookResponse>> ListBooks()
     {
         try
         {
-            List<Book> books = await _context.Books.ToListAsync();
-            List<BookResponse> booksResponseList = _mapper.Map<List<BookResponse>>(books);
+            var books = await _context.Books.Include(b => b.Category).ToListAsync();
+            var booksResponseList = _mapper.Map<List<BookResponse>>(books);
 
             return booksResponseList;
         }
@@ -72,8 +91,6 @@ public class BookService
                 throw new Exception("Kitap bulunamadı");
             }
 
-          
-            
             // Bu kullanımda mevcut nesneye (book) map etmek için kullanılır.
             // request içindeki güncel  veriler, book nesnesine map edilir.
             _mapper.Map(updateBookRequest, book);
@@ -94,4 +111,29 @@ public class BookService
             throw;
         }
     }
+
+    public async Task<bool> DeleteBook(int bookId)
+    {
+        try
+        {
+            if (bookId < 0) throw new ArgumentException("Geçersiz bookId");
+
+            var book = await _context.Books.FindAsync(bookId);
+
+            if (book == null) throw new Exception("Silinecek kitap bulunamadı.");
+
+            _context.Books.Remove(book);
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex + "DeleteBook işleminde hata oluştu");
+            throw;
+        }
+    }
+
+
 }

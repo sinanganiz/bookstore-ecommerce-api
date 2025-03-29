@@ -1,14 +1,11 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using BookStore.Business.Helper;
+using BookStore.Business.MappingProfiles;
 using BookStore.Business.Services;
 using BookStore.Data.Contexts;
 using BookStore.Data.Entities;
-using BookStore.Data.Helper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 
@@ -17,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddAutoMapper(typeof(BookMappingProfile), typeof(CategoryMappingProfile), typeof(UserMappingProfile));
 
 builder.Services.AddCors();
 builder.Services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<AppDbContext>();
@@ -39,7 +36,8 @@ var secretKey = Encoding.ASCII.GetBytes(builder.Configuration["JwtSettings:Secre
 string issuer = Encoding.ASCII.GetBytes(builder.Configuration["JwtSettings:Issuer"]!).ToString()!;
 string audience = Encoding.ASCII.GetBytes(builder.Configuration["JwtSettings:Audience"]!).ToString()!;
 
-builder.Services.AddAuthentication(options => {
+builder.Services.AddAuthentication(options =>
+{
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
@@ -66,6 +64,7 @@ builder.Services.AddScoped<BookService>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<UserService>();
 
 var app = builder.Build();
 
@@ -92,5 +91,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// SeedData.Initialize(app);
 
 app.Run();

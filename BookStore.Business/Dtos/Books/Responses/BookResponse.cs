@@ -1,5 +1,6 @@
 ﻿
-using BookStore.Business.Dtos.Categories.Responses;
+using System.Text.Json.Serialization;
+using BookStore.Business.Dtos.Categories;
 
 namespace BookStore.Business.Dtos.Books.Responses;
 
@@ -16,5 +17,7 @@ public class BookResponse
     public int Stock { get; set; }
     public double Price { get; set; }
     public DateOnly? PublishedDate { get; set; }
+    
+    [JsonPropertyName("category")]
     public CategoryResponse CategoryResponse { get; set; } = null!;
 }

@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
 using BookStore.Business.Dtos.Books.Requests;
 using BookStore.Business.Dtos.Books.Responses;
-using BookStore.Business.Dtos.Categories.Responses;
+using BookStore.Business.Dtos.Categories;
 using BookStore.Data.Entities;
 
-namespace BookStore.Business.Helper;
+namespace BookStore.Business.MappingProfiles;
 
-public class MappingProfile : Profile
+public class BookMappingProfile : Profile
 {
-    public MappingProfile()
+    public BookMappingProfile()
     {
 
         // Her farklı nesne dönüşümü için ayrı mapping tanımı yapılır
@@ -17,8 +17,8 @@ public class MappingProfile : Profile
 
 
         //SourceClass, DestinationClass
-        CreateMap<Book, BookResponse>();
-        CreateMap<Category, CategoryResponse>();
+        CreateMap<Book, BookResponse>()
+        .ForMember(dest => dest.CategoryResponse, opt => opt.MapFrom(src => src.Category));
 
         // Farklı property isimlerini manuel eşleştirme
         CreateMap<Book, CreatedBookResponse>()

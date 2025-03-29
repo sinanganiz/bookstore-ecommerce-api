@@ -1,0 +1,17 @@
+﻿using AutoMapper;
+using BookStore.Business.Dtos.Books.Requests;
+using BookStore.Business.Dtos.Books.Responses;
+using BookStore.Business.Dtos.Categories;
+using BookStore.Data.Entities;
+
+namespace BookStore.Business.MappingProfiles;
+
+public class UserMappingProfile : Profile
+{
+    public UserMappingProfile()
+    {
+
+
+
+    }
+}

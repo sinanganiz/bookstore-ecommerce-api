@@ -1,5 +1,5 @@
 using System;
-using BookStore.Business.Dtos.Categories.Responses;
+using BookStore.Business.Dtos.Categories;
 
 namespace BookStore.Business.Dtos.Books.Requests;
 
