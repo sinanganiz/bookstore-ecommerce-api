@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddAutoMapper(typeof(BookMappingProfile), typeof(CategoryMappingProfile), typeof(UserMappingProfile));
+builder.Services.AddAutoMapper(typeof(BookMappingProfile), typeof(CategoryMappingProfile), typeof(UserMappingProfile), typeof(ReviewMappingProfile));
 
 builder.Services.AddCors();
 builder.Services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<AppDbContext>();
@@ -33,8 +33,8 @@ builder.Services.Configure<IdentityOptions>(options =>
 });
 
 var secretKey = Encoding.ASCII.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!);
-string issuer = Encoding.ASCII.GetBytes(builder.Configuration["JwtSettings:Issuer"]!).ToString()!;
-string audience = Encoding.ASCII.GetBytes(builder.Configuration["JwtSettings:Audience"]!).ToString()!;
+var issuer = Encoding.ASCII.GetBytes(builder.Configuration["JwtSettings:Issuer"]!).ToString()!;
+var audience = Encoding.ASCII.GetBytes(builder.Configuration["JwtSettings:Audience"]!).ToString()!;
 
 builder.Services.AddAuthentication(options =>
 {
@@ -65,6 +65,7 @@ builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<ReviewService>();
 
 var app = builder.Build();
 
