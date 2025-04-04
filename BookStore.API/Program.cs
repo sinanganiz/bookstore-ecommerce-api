@@ -16,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddAutoMapper(typeof(BookMappingProfile), typeof(CategoryMappingProfile), typeof(UserMappingProfile), typeof(ReviewMappingProfile));
+builder.Services.AddAutoMapper(typeof(BookMappingProfile), typeof(CategoryMappingProfile), typeof(UserMappingProfile), typeof(ReviewMappingProfile), typeof(CartMappingProfile), typeof(OrderMappingProfile));
 
 builder.Services.AddCors();
 builder.Services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<AppDbContext>();
@@ -63,6 +63,11 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
+builder.Services.AddScoped(typeof(IBookRepository), typeof(BookRepository));
+builder.Services.AddScoped(typeof(ICartItemRepository), typeof(CartItemRepository));
+builder.Services.AddScoped(typeof(ICartRepository), typeof(CartRepository));
+builder.Services.AddScoped(typeof(IOrderItemRepository), typeof(OrderItemRepository));
+builder.Services.AddScoped(typeof(IOrderRepository), typeof(OrderRepository));
 
 builder.Services.AddScoped<BookService>();
 builder.Services.AddScoped<CategoryService>();
@@ -70,6 +75,8 @@ builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ReviewService>();
+
+builder.Services.AddScoped<CartService>();
 
 var app = builder.Build();
 
