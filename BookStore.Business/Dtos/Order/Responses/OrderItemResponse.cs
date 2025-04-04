@@ -1,5 +1,4 @@
 using BookStore.Business.Dtos.Books.Responses;
-using BookStore.Data.Entities;
 
 namespace BookStore.Business.Dtos.Order;
 

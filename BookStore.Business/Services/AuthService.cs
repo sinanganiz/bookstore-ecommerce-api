@@ -1,12 +1,8 @@
 ﻿
 using BookStore.Business.Constants;
-using BookStore.Business.Dtos;
 using BookStore.Business.Dtos.Auth.Requests;
-using BookStore.Data.Contexts;
 using BookStore.Data.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace BookStore.Business.Services;
 

@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BookStore.Business.Services;
-using Microsoft.AspNetCore.Authorization;
-using BookStore.Business.Constants;
 using BookStore.Business.Dtos.Books.Responses;
 using BookStore.Business.Dtos.Books.Requests;
 

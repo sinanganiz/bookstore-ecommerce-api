@@ -1,10 +1,8 @@
 using AutoMapper;
 using BookStore.Business.Constants;
 using BookStore.Business.Dtos.Users;
-using BookStore.Data.Contexts;
 using BookStore.Data.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace BookStore.Business.Services;
 

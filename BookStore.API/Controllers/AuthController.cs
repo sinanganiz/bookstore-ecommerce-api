@@ -19,7 +19,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginAppUserRequest model)
     {
         var token = await _authService.Login(model);
-        if (token == null) return Unauthorized("Geçersiz e-posta veya şifre!");
+        if (token == null) return Unauthorized("Invalid e-mail or password!");
         return Ok(new { Token = token });
     }
 

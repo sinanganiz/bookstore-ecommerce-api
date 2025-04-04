@@ -51,7 +51,7 @@ public class CategoryController : ControllerBase
     public async Task<IActionResult> Delete(int id)
     {
         await _categoryService.DeleteCategoryAsync(id);
-        return NoContent(); // 204 status code is the standard response for successful DELETE
+        return NoContent();
     }
 
 }

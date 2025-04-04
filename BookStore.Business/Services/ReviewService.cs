@@ -1,9 +1,7 @@
 using AutoMapper;
 using BookStore.Business.Dtos.Reviews;
-using BookStore.Data.Contexts;
 using BookStore.Data.Entities;
 using BookStore.Data.Repositories.Abstracts;
-using Microsoft.EntityFrameworkCore;
 
 namespace BookStore.Business.Services;
 public class ReviewService

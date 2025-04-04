@@ -1,6 +1,4 @@
 
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-
 namespace BookStore.Data.Repositories.Abstracts;
 
 

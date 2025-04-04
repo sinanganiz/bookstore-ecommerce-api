@@ -1,14 +1,8 @@
 ﻿
 using AutoMapper;
-using Azure.Core;
-using BookStore.Business.Dtos;
 using BookStore.Business.Dtos.Cart;
-using BookStore.Business.Dtos.Categories;
-using BookStore.Data.Contexts;
 using BookStore.Data.Entities;
 using BookStore.Data.Repositories.Abstracts;
-using Microsoft.AspNetCore.Mvc.Diagnostics;
-using Microsoft.EntityFrameworkCore;
 
 namespace BookStore.Business.Services;
 
