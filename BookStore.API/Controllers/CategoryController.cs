@@ -1,6 +1,7 @@
 
 using BookStore.Business.Dtos.Categories;
 using BookStore.Business.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.API.Controllers;
@@ -31,6 +32,8 @@ public class CategoryController : ControllerBase
     }
 
     [HttpPost("create")]
+    [Authorize(Roles = "Admin")]
+
     public async Task<ActionResult<CreatedCategoryResponse>> Create(CreateCategoryRequest request)
     {
 
@@ -39,6 +42,7 @@ public class CategoryController : ControllerBase
     }
 
     [HttpPut("update/{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<UpdatedCategoryResponse>> Update(int id, UpdateCategoryRequest request)
     {
 
@@ -48,6 +52,7 @@ public class CategoryController : ControllerBase
     }
 
     [HttpDelete("delete/{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
         await _categoryService.DeleteCategoryAsync(id);

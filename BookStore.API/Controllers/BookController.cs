@@ -2,6 +2,7 @@
 using BookStore.Business.Services;
 using BookStore.Business.Dtos.Books.Responses;
 using BookStore.Business.Dtos.Books.Requests;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BookStore.API.Controllers;
 
@@ -31,6 +32,7 @@ public class BookController : ControllerBase
     }
 
     [HttpPost("create")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<CreatedBookResponse>> CreateBook(CreateBookRequest createBookRequest)
     {
         var createdBookResponse = await _bookService.AddBookAsync(createBookRequest);
@@ -38,6 +40,7 @@ public class BookController : ControllerBase
     }
 
     [HttpPut("update/{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<UpdatedBookResponse>> UpdateBook(int id, [FromBody] UpdateBookRequest updateBookRequest)
     {
         var updatedBookResponse = await _bookService.UpdateBookAsync(id, updateBookRequest);
@@ -45,6 +48,7 @@ public class BookController : ControllerBase
     }
 
     [HttpDelete("delete/{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteBook(int id)
     {
         await _bookService.DeleteBookAsync(id);

@@ -74,3 +74,38 @@ BookStore.Data (Data Access Layer)
 - Dependency Inversion
 - Repository Pattern
 - DTO Pattern
+
+## 📚 Main API Endpoints
+
+### Authentication
+- `POST /api/auth/register` - Register
+- `POST /api/auth/login` - Login
+
+### Books
+- `GET /api/book/list` - List books
+- `GET /api/book/get/{id}` - Get specific book
+- `POST /api/book/create` - Add new book (Admin)
+- `PUT /api/book/update/{id}` - Update book (Admin)
+- `DELETE /api/book/delete/{id}` - Delete book (Admin)
+
+### Categories
+- `GET /api/category/list` - List categories
+- `GET /api/category/get/{id}` - Get specific category
+- `POST /api/category/create` - Add new categoy (Admin)
+- `PUT /api/category/update/{id}` - Update category (Admin)
+- `DELETE /api/category/delete/{id}` - Delete category (Admin)
+
+### Shopping Cart
+- `GET /api/cart` - Get user's cart
+- `POST /api/cart/add` - Add item to cart
+- `PUT /api/cart/items/{id}` - Update item in cart
+- `DELETE /api/cart/items/{id}` - Delete item from cart
+- `DELETE /api/cart` - Clear cart
+
+### Orders
+- `POST /api/order` - Add new order
+- `GET /api/order/my-orders` - Get user's orders
+- `GET /api/order/{id}` - Get order details
+- `PUT /api/order/{id}/status` - Update order's status
+- `PUT /api/order/{id}/payment` - Update order's payment status
+- `POST /api/order/{id}/cancel` - Cancel order
