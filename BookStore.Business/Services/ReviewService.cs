@@ -2,70 +2,58 @@ using AutoMapper;
 using BookStore.Business.Dtos.Reviews;
 using BookStore.Data.Contexts;
 using BookStore.Data.Entities;
+using BookStore.Data.Repositories.Abstracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookStore.Business.Services;
 public class ReviewService
 {
-    private readonly AppDbContext _context;
+    private readonly IRepository<Review, int> _repository;
     private readonly IMapper _mapper;
 
-    public ReviewService(AppDbContext context, IMapper mapper)
+    public ReviewService(IRepository<Review, int> repository, IMapper mapper)
     {
-        _context = context;
+        _repository = repository;
         _mapper = mapper;
     }
 
-    public async Task<ReviewResponse> GetByIdAsync(int id)
+    public async Task<IEnumerable<ReviewResponse>> GetAllReviewsAsync()
     {
-        var review = await _context.Reviews.FindAsync(id);
-
-        var response = _mapper.Map<ReviewResponse>(review);
-
-        return response;
-    }
-    public async Task<List<ReviewResponse>> ListAsync()
-    {
-        var reviews = await _context.Reviews.ToListAsync();
-
-        var reviewResponses = _mapper.Map<List<ReviewResponse>>(reviews);
-
+        var reviews = await _repository.GetAllAsync();
+        var reviewResponses = _mapper.Map<IEnumerable<ReviewResponse>>(reviews);
         return reviewResponses;
     }
 
-    public async Task<CreatedReviewResponse> CreateAsync(CreateReviewRequest request)
+    public async Task<ReviewResponse> GetReviewByIdAsync(int id)
+    {
+        var review = await _repository.GetByIdAsync(id);
+        var response = _mapper.Map<ReviewResponse>(review);
+        return response;
+    }
+
+    public async Task<CreatedReviewResponse> AddReviewAsync(CreateReviewRequest request)
     {
         var review = _mapper.Map<Review>(request);
+        var addedReview = await _repository.AddAsync(review);
 
-        await _context.Reviews.AddAsync(review);
-        await _context.SaveChangesAsync();
-
-        var response = _mapper.Map<CreatedReviewResponse>(review);
-
-        return response;
+        var addedReviewResponse = _mapper.Map<CreatedReviewResponse>(addedReview);
+        return addedReviewResponse;
     }
 
-    public async Task<UpdatedReviewResponse> UpdateAsync(int id, UpdateReviewRequest request)
+    public async Task<UpdatedReviewResponse> UpdateReviewAsync(int id, UpdateReviewRequest request)
     {
-        var review = await _context.Reviews.FindAsync(id);
-
+        var review = await _repository.GetByIdAsync(id);
         _mapper.Map(request, review);
+        var updatedReview = await _repository.UpdateAsync(review);
 
-        _context.Reviews.Update(review);
-        await _context.SaveChangesAsync();
-
-        var response = _mapper.Map<UpdatedReviewResponse>(review);
-        return response;
+        var updatedReviewResponse = _mapper.Map<UpdatedReviewResponse>(updatedReview);
+        return updatedReviewResponse;
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task DeleteReviewAsync(int id)
     {
-        var review = await _context.Reviews.FindAsync(id);
-
-        _context.Reviews.Remove(review);
-        await _context.SaveChangesAsync();
-
-        return true;
+        var review = await _repository.GetByIdAsync(id);
+        await _repository.DeleteAsync(review);
     }
 
 }

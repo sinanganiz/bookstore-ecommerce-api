@@ -1,138 +1,64 @@
 ﻿using AutoMapper;
 using BookStore.Business.Dtos.Books.Requests;
 using BookStore.Business.Dtos.Books.Responses;
-using BookStore.Data.Contexts;
 using BookStore.Data.Entities;
-using Microsoft.EntityFrameworkCore;
+using BookStore.Data.Repositories.Abstracts;
+
 
 namespace BookStore.Business.Services;
 
 public class BookService
 {
-    private readonly AppDbContext _context;
+    private readonly IBookRepository _bookRepository;
     private readonly IMapper _mapper;
 
-    public BookService(AppDbContext context, IMapper mapper)
+    public BookService(IBookRepository bookRepository, IMapper mapper)
     {
-        _context = context;
+        _bookRepository = bookRepository;
         _mapper = mapper;
     }
 
-    public async Task<BookResponse> GetByBookId(int bookId)
+
+    public async Task<IEnumerable<BookResponse>> GetAllBooksAsync()
     {
-        try
-        {
-            if (bookId < 0) throw new ArgumentException("Geçersiz bookId");
-
-            var book = await _context.Books.Include(b => b.Category).FirstOrDefaultAsync(b => b.Id == bookId);
-
-            if (book == null) throw new Exception("Kitap bulunamadı.");
-
-            BookResponse bookResponse = _mapper.Map<BookResponse>(book);
-
-            return bookResponse;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex + "GetByBookId işleminde hata oluştu");
-            throw;
-        }
+        var books = await _bookRepository.GetAllAsync();
+        var bookResponseList = _mapper.Map<IEnumerable<BookResponse>>(books);
+        return bookResponseList;
     }
 
-    public async Task<List<BookResponse>> ListBooks()
+    public async Task<BookResponse> GetBookByIdAsync(int id)
     {
-        try
-        {
-            var books = await _context.Books.Include(b => b.Category).ToListAsync();
-            var booksResponseList = _mapper.Map<List<BookResponse>>(books);
-
-            return booksResponseList;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex + "ListBooks işleminde hata oluştu.");
-            throw;
-        }
-
+        var book = await _bookRepository.GetByIdAsync(id);
+        var bookResponse = _mapper.Map<BookResponse>(book);
+        return bookResponse;
     }
 
-    public async Task<CreatedBookResponse> CreateBook(CreateBookRequest createBookRequest)
+    public async Task<CreatedBookResponse> AddBookAsync(CreateBookRequest createBookRequest)
     {
-        try
-        {
-            // Request'ten Book entity'sine dönüşüm
-            Book book = _mapper.Map<Book>(createBookRequest);
+        var book = _mapper.Map<Book>(createBookRequest);
+        var addedBook = _bookRepository.AddAsync(book);
 
-            await _context.Books.AddAsync(book);
-            await _context.SaveChangesAsync();
-
-            var bookWithCategory = await _context.Books
-                                        .Include(b => b.Category)
-                                        .FirstOrDefaultAsync(b => b.Id == book.Id);
-
-            // bookWithCategory entity sinden response nesnesine dönüşüm
-            return _mapper.Map<CreatedBookResponse>(bookWithCategory);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex + "CreateBook işleminde hata oluştu.");
-            throw;
-        }
-
+        var bookWithCategory = _bookRepository.GetBookWithCategoryByIdAsync(addedBook.Id);
+        var createdBookResponse = _mapper.Map<CreatedBookResponse>(bookWithCategory);
+        return createdBookResponse;
     }
 
-    public async Task<UpdatedBookResponse> UpdateBook(int bookId, UpdateBookRequest updateBookRequest)
+    public async Task<UpdatedBookResponse> UpdateBookAsync(int id, UpdateBookRequest updateBookRequest)
     {
-        try
-        {
-            Book? book = await _context.Books.FindAsync(bookId);
-            if (book == null)
-            {
-                throw new Exception("Kitap bulunamadı");
-            }
+        var book = await _bookRepository.GetByIdAsync(id);
+        _mapper.Map(updateBookRequest, book);
+        var updatedBook = await _bookRepository.UpdateAsync(book);
 
-            // Bu kullanımda mevcut nesneye (book) map etmek için kullanılır.
-            // request içindeki güncel  veriler, book nesnesine map edilir.
-            _mapper.Map(updateBookRequest, book);
+        var updatedBookWithCategory = await _bookRepository.GetBookWithCategoryByIdAsync(updatedBook.Id);
 
-            _context.Books.Update(book);
-            await _context.SaveChangesAsync();
-
-            var bookWithCategory = await _context.Books
-                .Include(b => b.Category)
-                .FirstOrDefaultAsync(b => b.Id == book.Id);
-
-            return _mapper.Map<UpdatedBookResponse>(bookWithCategory);
-
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex + "UpdateBook işleminde hata oluştu.");
-            throw;
-        }
+        var updatedBookResponse = _mapper.Map<UpdatedBookResponse>(updatedBookWithCategory);
+        return updatedBookResponse;
     }
 
-    public async Task<bool> DeleteBook(int bookId)
+    public async Task DeleteBookAsync(int id)
     {
-        try
-        {
-            if (bookId < 0) throw new ArgumentException("Geçersiz bookId");
-
-            var book = await _context.Books.FindAsync(bookId);
-
-            if (book == null) throw new Exception("Silinecek kitap bulunamadı.");
-
-            _context.Books.Remove(book);
-
-            await _context.SaveChangesAsync();
-
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex + "DeleteBook işleminde hata oluştu");
-            throw;
-        }
+        var book = await _bookRepository.GetByIdAsync(id);
+        await _bookRepository.DeleteAsync(book);
     }
 
 

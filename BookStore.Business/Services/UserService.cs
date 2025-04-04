@@ -10,20 +10,18 @@ namespace BookStore.Business.Services;
 
 public class UserService
 {
-    private readonly AppDbContext _context;
     private readonly UserManager<AppUser> _userManager;
     private readonly IMapper _mapper;
 
-    public UserService(AppDbContext context, UserManager<AppUser> userManager, IMapper mapper)
+    public UserService(UserManager<AppUser> userManager, IMapper mapper)
     {
-        _context = context;
         _mapper = mapper;
         _userManager = userManager;
     }
 
     public async Task<UserResponse> GetUserByIdAsync(string id)
     {
-        var user = await _context.Users.FindAsync(id);
+        var user = await _userManager.FindByIdAsync(id);
 
         var response = _mapper.Map<UserResponse>(user);
         return response;

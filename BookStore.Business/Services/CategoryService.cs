@@ -4,117 +4,60 @@ using BookStore.Business.Dtos;
 using BookStore.Business.Dtos.Categories;
 using BookStore.Data.Contexts;
 using BookStore.Data.Entities;
+using BookStore.Data.Repositories.Abstracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookStore.Business.Services;
 
 public class CategoryService
 {
-    private readonly AppDbContext _context;
+    private readonly IRepository<Category, int> _repository;
     private readonly IMapper _mapper;
 
-    public CategoryService(AppDbContext context, IMapper mapper)
+    public CategoryService(IRepository<Category, int> repository, IMapper mapper)
     {
-        _context = context;
         _mapper = mapper;
+        _repository = repository;
     }
 
-    public async Task<CategoryResponse> GetCategoryById(int id)
+    public async Task<IEnumerable<CategoryResponse>> GetAllCategoriesAsync()
     {
-        try
-        {
-            if (id < 0) throw new ArgumentException("Geçersiz id");
-
-            var category = await _context.Categories.FindAsync(id);
-
-            if (category == null) throw new Exception("Kategori bulunamadı");
-
-            var categoryResponse = _mapper.Map<CategoryResponse>(category);
-
-            return categoryResponse;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-            throw;
-        }
+        var categories = await _repository.GetAllAsync();
+        var categoryResponses = _mapper.Map<IEnumerable<CategoryResponse>>(categories);
+        return categoryResponses;
     }
 
-    public async Task<List<CategoryResponse>> List()
+    public async Task<CategoryResponse> GetCategoryByIdAsync(int id)
     {
-        try
-        {
-            var categories = await _context.Categories.ToListAsync();
-            var categoryResponses = _mapper.Map<List<CategoryResponse>>(categories);
-            return categoryResponses;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-            throw;
-        }
-    }
-    public async Task<CreatedCategoryResponse> Create(CreateCategoryRequest request)
-    {
-        try
-        {
-            var category = _mapper.Map<Category>(request);
-            await _context.Categories.AddAsync(category);
-            await _context.SaveChangesAsync();
-
-            var response = _mapper.Map<CreatedCategoryResponse>(category);
-            return response;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-            throw;
-        }
+        var category = await _repository.GetByIdAsync(id);
+        var categoryResponse = _mapper.Map<CategoryResponse>(category);
+        return categoryResponse;
     }
 
-    public async Task<UpdatedCategoryResponse> UpdateAsync(int id, UpdateCategoryRequest request)
+
+    public async Task<CreatedCategoryResponse> AddCategoryAsync(CreateCategoryRequest request)
     {
-        try
-        {
-            var category = await _context.Categories.FindAsync(id);
+        var category = _mapper.Map<Category>(request);
+        var addedCategory = await _repository.AddAsync(category);
 
-            if (category == null) throw new Exception("Kategori bulunamadı!");
-
-            _mapper.Map(request, category);
-
-            _context.Categories.Update(category);
-            await _context.SaveChangesAsync();
-
-            var response = _mapper.Map<UpdatedCategoryResponse>(category);
-
-            return response;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-            throw;
-        }
+        var createdBookResponse = _mapper.Map<CreatedCategoryResponse>(addedCategory);
+        return createdBookResponse;
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<UpdatedCategoryResponse> UpdateCategoryAsync(int id, UpdateCategoryRequest request)
     {
-        try
-        {
-            if (id < 0) throw new ArgumentException();
-            
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null) throw new Exception("Kategori bulunamadı!");
+        var category = await _repository.GetByIdAsync(id);
+        _mapper.Map(request, category);
+        var updatedCategory = await _repository.UpdateAsync(category);
 
-            _context.Categories.Remove(category);
-            await _context.SaveChangesAsync();
+        var response = _mapper.Map<UpdatedCategoryResponse>(updatedCategory);
+        return response;
+    }
 
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-            throw;
-        }
+    public async Task DeleteCategoryAsync(int id)
+    {
+        var category = await _repository.GetByIdAsync(id);
+        await _repository.DeleteAsync(category);
     }
 
 

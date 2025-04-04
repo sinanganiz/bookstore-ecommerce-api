@@ -19,71 +19,38 @@ public class CategoryController : ControllerBase
     [HttpGet("get/{id}")]
     public async Task<ActionResult<CategoryResponse>> GetById(int id)
     {
-        try
-        {
-            var categoryResponse = await _categoryService.GetCategoryById(id);
-            return Ok(categoryResponse);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Exception:", ex); // Add logger
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
+        var categoryResponse = await _categoryService.GetCategoryByIdAsync(id);
+        return Ok(categoryResponse);
     }
 
     [HttpGet("list")]
     public async Task<ActionResult<List<CategoryResponse>>> List()
     {
-        try
-        {
-            var categoryResponses = await _categoryService.List();
-            return Ok(categoryResponses);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-            throw;
-        }
+        var categoryResponses = await _categoryService.GetAllCategoriesAsync();
+        return Ok(categoryResponses);
     }
 
     [HttpPost("create")]
     public async Task<ActionResult<CreatedCategoryResponse>> Create(CreateCategoryRequest request)
     {
-        try
-        {
-            var response = await _categoryService.Create(request);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-            throw;
-        }
+
+        var response = await _categoryService.AddCategoryAsync(request);
+        return Ok(response);
     }
 
     [HttpPut("update/{id}")]
     public async Task<ActionResult<UpdatedCategoryResponse>> Update(int id, UpdateCategoryRequest request)
     {
-        try
-        {
-            var response = await _categoryService.UpdateAsync(id, request);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-            throw;
-        }
+
+        var response = await _categoryService.UpdateCategoryAsync(id, request);
+        return Ok(response);
+
     }
 
     [HttpDelete("delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        await _categoryService.DeleteAsync(id);
+        await _categoryService.DeleteCategoryAsync(id);
         return NoContent(); // 204 status code is the standard response for successful DELETE
     }
 

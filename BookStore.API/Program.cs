@@ -3,6 +3,8 @@ using BookStore.Business.MappingProfiles;
 using BookStore.Business.Services;
 using BookStore.Data.Contexts;
 using BookStore.Data.Entities;
+using BookStore.Data.Repositories.Abstracts;
+using BookStore.Data.Repositories.Concretes;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -59,6 +61,8 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+
+builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 
 builder.Services.AddScoped<BookService>();
 builder.Services.AddScoped<CategoryService>();

@@ -1,9 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
-using BookStore.Business.Dtos;
 using BookStore.Business.Services;
-using Microsoft.AspNetCore.Identity;
-using BookStore.Data.Entities;
 using BookStore.Business.Dtos.Auth.Requests;
 
 namespace BookStore.API.Controllers;
@@ -35,6 +31,4 @@ public class AuthController : ControllerBase
         if (token == null) return BadRequest("Registration failed");
         return Ok(new { Token = token });
     }
-
-
 }

@@ -19,83 +19,37 @@ public class BookController : ControllerBase
     }
 
     [HttpGet("list")]
-    public async Task<ActionResult<List<BookResponse>>> List()
+    public async Task<ActionResult<IEnumerable<BookResponse>>> List()
     {
-        List<BookResponse> bookResponses = await _bookService.ListBooks();
-        return bookResponses;
+        var bookResponses = await _bookService.GetAllBooksAsync();
+        return Ok(bookResponses);
     }
 
-    [HttpGet("get/{bookId}")]
-    public async Task<ActionResult<BookResponse>> GetByBookId(int bookId)
+    [HttpGet("get/{id}")]
+    public async Task<ActionResult<BookResponse>> GetByBookId(int id)
     {
-
-        try
-        {
-            BookResponse bookResponse = await _bookService.GetByBookId(bookId);
-            return Ok(bookResponse);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Exception:", ex); // Add logger
-            return StatusCode(StatusCodes.Status500InternalServerError, "Kitap bilgisi alınırken bir hata oluştu. Lütfen daha sonra tekrar deneyin.");
-        }
-
+        var bookResponse = await _bookService.GetBookByIdAsync(id);
+        return Ok(bookResponse);
     }
 
     [HttpPost("create")]
     public async Task<ActionResult<CreatedBookResponse>> CreateBook(CreateBookRequest createBookRequest)
     {
-        CreatedBookResponse createdBookResponse = await _bookService.CreateBook(createBookRequest);
+        var createdBookResponse = await _bookService.AddBookAsync(createBookRequest);
         return Ok(createdBookResponse);
     }
 
-    [HttpPut("update/{bookId}")]
-    public async Task<ActionResult<UpdatedBookResponse>> UpdateBook(int bookId, [FromBody] UpdateBookRequest updateBookRequest)
+    [HttpPut("update/{id}")]
+    public async Task<ActionResult<UpdatedBookResponse>> UpdateBook(int id, [FromBody] UpdateBookRequest updateBookRequest)
     {
-        UpdatedBookResponse updatedBookResponse = await _bookService.UpdateBook(bookId, updateBookRequest);
+        var updatedBookResponse = await _bookService.UpdateBookAsync(id, updateBookRequest);
         return Ok(updatedBookResponse);
     }
 
-    [HttpDelete("delete/{bookId}")]
-    public async Task<IActionResult> DeleteBook(int bookId)
+    [HttpDelete("delete/{id}")]
+    public async Task<IActionResult> DeleteBook(int id)
     {
-        try
-        {
-            var result = await _bookService.DeleteBook(bookId);
-
-            if (!result)
-            {
-                return NotFound($"ID: {bookId} olan kitap bulunamadı.");
-            }
-
-            return NoContent(); // 204 status code is the standard response for successful DELETE
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Exception:", ex); // Add logger
-            return StatusCode(StatusCodes.Status500InternalServerError, "Kitap silme işlemi sırasında bir hata oluştu.");
-        }
+        await _bookService.DeleteBookAsync(id);
+        return NoContent();
     }
-
-    // [Authorize(Roles = Roles.Admin)]
-    // [HttpGet("admin")]
-    // public IActionResult GetSecureAdminData()
-    // {
-    //     return Ok("Tebrikler. Admin verisine ulaşabiliyorsunuz.");
-    // }
-
-    // [Authorize(Roles = Roles.Customer)]
-    // [HttpGet("customer")]
-    // public IActionResult GetSecureCustomerData()
-    // {
-    //     return Ok("Tebrikler. Customer verisine ulaşabiliyorsunuz.");
-    // }
 }
