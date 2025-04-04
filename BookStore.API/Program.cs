@@ -77,6 +77,7 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ReviewService>();
 
 builder.Services.AddScoped<CartService>();
+builder.Services.AddScoped<OrderService>();
 
 var app = builder.Build();
 
