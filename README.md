@@ -4,7 +4,7 @@ A robust and scalable e-commerce API built with .NET 9, implementing modern soft
 
 ## 🏗 Architecture
 
-This project follows a clean, maintainable, and scalable N-Tier Architecture:
+This project follows a clean, maintainable, and scalable N-Layer Architecture:
 
 ```
 BookStore.API (Presentation Layer)
